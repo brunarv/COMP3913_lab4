@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Cors Request</title>
+</head>
+<body>
+    <h3>Cors Request</h3>
+    <button id="btnGetCountries" onclick="showonlyone('newboxes0');">Get Countries</button> 
+   
+    <button id="btnAddCountries" onclick="showonlyone('newboxes1');">Add Countries</button>
+   
+    <button id="btnGetCountry" onclick="showonlyone('newboxes2');">Country By Id</button>
+
+    <button id="btnUpdateCountry" onclick="showonlyone('newboxes3');">Update Country</button>
+
+    <button id="btnDeleteCountry" onclick="showonlyone('newboxes4');">Remove Country</button>
+
+    <div class="newboxes" id="newboxes0" style="display: none" >
+        <form>
+            <fieldset>
+                <legend>Countries</legend>
+                <p>Retrieve all countries</p>
+            </fieldset>
+        </form>
+        </div>  
+
+    <div class="newboxes" id="newboxes1" style="display: none" >
+        <form>
+            <fieldset>
+                <legend>Add Country</legend>
+                Country: <input id="country" type="text"><br><br>
+                Population: <input id="population" type="text">
+                <input type="button" value='Submit' name="answer" onclick="addCountry()"></input>
+            </fieldset>
+        </form>
+    </div>      
+          
+    <div class="newboxes" id="newboxes2" style="display: none" >
+        <form>
+            <fieldset>
+                <legend>Country By Id</legend>
+                ID: <input id='valueID' type="text">
+                <input type="button" value='Submit' name="answer" onclick="getCountryById()"></input>
+            </fieldset>
+        </form>
+    </div>  
+
+    <div class="newboxes" id="newboxes3" style="display: none" >
+        <form>
+            <fieldset>
+                <legend>Update Country By Id</legend>
+                ID: <input id="countryID" type="text"><br><br>
+                Country: <input id="countryValue" type="text"><br><br>
+                Population: <input id="populationValue" type="text">    
+                <input type="button" value='Submit' name="answer" onclick="updateCountryById()"></input>
+            </fieldset>
+        </form>
+    </div> 
+        
+    <div class="newboxes" id="newboxes4" style="display: none" >
+        <form>
+            <fieldset>
+                <legend>Remove Country By Id</legend>
+                ID: <input id='deleteID' type="text">
+                <input type="button" value='Submit' name="answer" onclick="deleteCountryById()"></input>
+                
+            </fieldset>
+        </form>
+    </div>  
+    <pre id="preOutput"></pre>  
+    
+
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+
+    <script>
+       
+       function showonlyone(thechosenone) {
+            $('.newboxes').each(function(index) {
+                if ($(this).attr("id") == thechosenone) {
+                    $(this).show(200);
+                }
+                else {
+                    $(this).hide(600);
+                }
+            });
+            
+        }
+
+        function getCountryById () {
+                var id = document.getElementById('valueID').value;
+                var domain = document.createElement('a');
+                var url = domain + "api/countries/" + id;
+                $.get(url).always(showResponse);
+                return false;
+                
+        };
+
+            function addCountry () {
+                var country = document.getElementById('country').value;
+                var population = document.getElementById('population').value;
+                var domain = document.createElement('a');
+                var url = domain + "api/countries/";
+                $.post(url, {"country": country, "population": population}).always(showResponse);
+                return false;
+                
+            };
+
+            function updateCountryById () {
+                var id = document.getElementById('countryID').value;
+                var country = document.getElementById('countryValue').value;
+                var population = document.getElementById('populationValue').value;
+                $.ajax({
+                    url: document.createElement('a') + "/api/countries/" + id,
+                    type: 'PUT',
+                    data: {"country": country, "population": population},
+                    success: showResponse
+                });
+            };
+
+            function deleteCountryById () {
+                var id = document.getElementById('deleteID').value;
+                $.ajax({
+                    url: document.createElement('a') + "/api/countries/" + id,
+                    type: 'DELETE',
+                    success: showResponse
+                });
+    
+            };
+
+            var showResponse = function (object) {
+                $("#preOutput").text(JSON.stringify(object, null, 4));
+            };
+
+        $(function () {
+            var getCountries = function () {
+                var domain = document.createElement('a');
+                var url = domain + "/api/countries/";
+                $.get(url).always(showResponse);
+                return false;
+            };
+
+            $("#btnGetCountries").click(getCountries);
+            
+        });
+    </script>
+
+</body>
+</html>
